@@ -1,5 +1,6 @@
 import { html, css } from 'lit';
 import { SimpleColors } from '@lrnwebcomponents/simple-colors/simple-colors.js';
+import './SciCardIcon.js';
 
 // const beaker = new URL('../assets/beaker.svg', import.meta.url).href;
 // const lightbulb = new URL('../assets/lightbulb.svg', import.meta.url).href;
@@ -66,8 +67,19 @@ export class SciCardBanner extends SimpleColors {
 
   constructor() {
     super();
+    this.type = '';
+    this.myIcon = null;
     this.accentColor = 'green';
     this.dark = false;
+
+    if (this.getAttribute('icon') != null) {
+      const sketchTag = document.createElement('sci-card-icon');
+      sketchTag.innerHTML = this.getAttribute('icon');
+      this.appendChild(sketchTag);
+      setTimeout(() => {
+        import('./SciCardIcon.js');
+      }, 0);
+    }
   }
 
   static get properties() {
@@ -90,6 +102,7 @@ export class SciCardBanner extends SimpleColors {
           --sci-card-banner-color1: darkorange;
           --sci-card-banner-color2: green;
           --sci-card-banner-color3: blue;
+          /* font-family: 'Open Sans', sans-serif; */
         }
         img {
           display: inline-flex;
@@ -97,7 +110,7 @@ export class SciCardBanner extends SimpleColors {
           width: var(--sci-card-width, 150px);
           background-color: transparent;
         }
-        #banner1 {
+        #banner {
           display: flex;
           flex-direction: row;
           justify-content: center;
@@ -105,18 +118,6 @@ export class SciCardBanner extends SimpleColors {
           background-color: transparent;
           color: white;
         }
-        /* #banner2 {
-          display: flex;
-          flex-direction: row;
-          background-color: var(--sci-card-banner-color2);
-          color: white;
-        }
-        #banner3 {
-          display: flex;
-          flex-direction: row;
-          background-color: var(--sci-card-banner-color3);
-          color: white;
-        } */
         #headers {
           padding: 5px;
           margin: 5px;
@@ -149,30 +150,20 @@ export class SciCardBanner extends SimpleColors {
     return html`
       <div id="bannerElement">
         <sci-card-icon
-          icon="${this.myIcon}"
+          icon="test"
+          my-icon="${this.myIcon}"
           type="${this.myIcon}"
         ></sci-card-icon>
-        <div id="banner1">
+        <div id="banner">
           <div id="headers">
             <slot id="main-header" name="main-header"></slot>
             <slot id="sub-header" name="sub-header"></slot>
           </div>
         </div>
-        <!-- <div id="banner2">
-          <div id="headers">
-            <div slot="main-header" id="main-header">Unit 1</div>
-            <div slot="sub-header" id="sub-header">Chem Connection</div>
-          </div>
-        </div>
-        <div id="banner3">
-          <div id="headers">
-            <div slot="main-header" id="main-header">Unit 1</div>
-            <div slot="sub-header" id="sub-header">Did you know?</div>
-          </div>
-        </div> -->
       </div>
       <script type="module">
         import './src/app.js';
+        import './src/SciCardIcon.js';
       </script>
     `;
   }
