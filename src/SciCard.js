@@ -1,6 +1,7 @@
 // dependencies / things imported
 import { html, css } from 'lit';
 import { SimpleColors } from '@lrnwebcomponents/simple-colors/simple-colors.js';
+import '@table-in-the-corner/invisi-button/invisi-button';
 
 // this is the base path to the assets calculated at run time
 // this ensures that assets are shipped correctly when building the demo
@@ -23,10 +24,10 @@ export class SciCard extends SimpleColors {
     super();
     this.myIcon = null;
     this.type = '';
-    this.accentColor = 'blue';
-    this.dark = 'false';
-    this.mainheader = 'This is the main header.';
-    this.subheader = 'This is the subheader.';
+    this.dark = false;
+    this.mainheader = 'Unit 1';
+    this.subheader = 'Learning Objectives';
+    this.openState = true;
 
     if (this.getAttribute('icon') != null) {
       const sketchTag = document.createElement('sci-card-icon');
@@ -36,6 +37,8 @@ export class SciCard extends SimpleColors {
         import('./SciCardIcon.js');
       }, 0);
     }
+
+    // if (document.querySelector("#cardFrame").clientWidth < "320px")
 
     // document.querySelector('#cardFrame').addEventListener('toggle', event => {
     //   if (document.querySelector('#cardFrame').open) {
@@ -50,13 +53,11 @@ export class SciCard extends SimpleColors {
   // properties that you wish to use as data in HTML, CSS, and the updated life-cycle
   static get properties() {
     return {
-      // reflect allows state changes to the element's property to be leveraged in CSS selectors
       type: { type: String, reflect: true },
-      // attribute helps us bind the JS spec for variables names to the HTML spec
-      // <learning-card my-icon="whatever" will set this.myIcon to "whatever"
       myIcon: { type: String, attribute: 'my-icon' },
       mainheader: { type: String },
       subheader: { type: String },
+      openState: { type: Boolean },
     };
   }
 
@@ -68,16 +69,42 @@ export class SciCard extends SimpleColors {
         this.myIcon = 'beaker';
         this.mainheader = 'Unit 1';
         this.subheader = 'Chem Connection';
+        this.accentColor = 'seagreen';
+        this.myBody = html`
+          <ul>
+            <li>Describe the subatomic particles that make up an atom.</li>
+            <li>
+              Use the periodic table to determine the numbers of protons and
+              electrons in a neutral (uncharged) atom.
+            </li>
+          </ul>
+        `;
       }
       if (propName === 'type' && this[propName] === 'objective') {
         this.myIcon = 'lightbulb';
         this.mainheader = 'Unit 1';
         this.subheader = 'Learning Objectives';
+        this.accentColor = 'darkorange';
+        this.myBody = html`
+          <ul>
+            <li>Learning Objective 1</li>
+            <li>Learning Objective 2</li>
+          </ul>
+        `;
       }
       if (propName === 'type' && this[propName] === 'fact') {
         this.myIcon = 'question';
         this.mainheader = 'Unit 1';
         this.subheader = 'Did you know?';
+        this.accentColor = 'slateblue';
+        this.myBody = html`
+          <ul>
+            <li>
+              There is about 0.4 pounds or 200g of NaCl in the average adult
+              human body.
+            </li>
+          </ul>
+        `;
       }
     });
   }
@@ -94,6 +121,7 @@ export class SciCard extends SimpleColors {
   // this fires EVERY time the element is moved
   connectedCallback() {
     super.connectedCallback();
+    window.addEventListener('resize', this.stateToggle);
   }
 
   // HTMLElement life-cycle, element has been removed from the page OR moved
@@ -120,6 +148,38 @@ export class SciCard extends SimpleColors {
   //   // }
   // }
 
+  /* eslint-disable no-param-reassign */
+  stateToggle() {
+    // console.log(this.shadowRoot.querySelector('details'))
+    // https://stackoverflow.com/questions/52365938/get-all-elements-containing-a-class-with-queryselector
+    if (
+      this.window.document
+        .querySelector('card-frame')
+        .shadowRoot.querySelector('sci-card').clientWidth < 380
+    ) {
+      this.openState = false;
+      const nodeList = this.window.document.querySelectorAll('card-frame');
+      nodeList.forEach(el => {
+        el.shadowRoot
+          .querySelector('sci-card')
+          .shadowRoot.querySelector('details').open = this.openState;
+      });
+
+      // this.window.document.querySelector('card-frame').shadowRoot.querySelector('sci-card').shadowRoot.querySelector('details').open = this.openState
+    } else {
+      this.openState = true;
+      const nodeList2 = this.window.document.querySelectorAll('card-frame');
+      nodeList2.forEach(el => {
+        el.shadowRoot
+          .querySelector('sci-card')
+          .shadowRoot.querySelector('details').open = this.openState;
+      });
+
+      // this.window.document.querySelector('card-frame').shadowRoot.querySelector('sci-card').shadowRoot.querySelector('details').open = true
+    }
+  }
+  /* eslint-enable no-param-reassign */
+
   // CSS - specific to Lit
   static get styles() {
     return [
@@ -127,22 +187,21 @@ export class SciCard extends SimpleColors {
       css`
         :host {
           display: block;
-          --learning-objective-primary-color: orange-5;
-        }
-        /* this is how you match something on the tag itself like <learning-card type="math"> and then style the img inside */
-        :host([type='math']) img {
-          background-color: purple;
+          min-width: 100px;
         }
         img {
           display: inline-flex;
-          height: var(--learning-card-height, 100px);
-          width: var(--learning-card-width, 100px);
+          height: var(--learning-card-height, 50px);
+          width: var(--learning-card-width, 50px);
           background-color: green;
         }
         summary {
           list-style-position: inside;
           list-style-image: url('../assets/arrow-right.svg');
-          display: flex;
+          display: block;
+        }
+        li {
+          font-size: x-large;
         }
         #drawerContents {
           display: flex;
@@ -154,6 +213,25 @@ export class SciCard extends SimpleColors {
           box-shadow: 4px 4px 7px 0px rgba(128, 0, 0, 1);
           margin: 30px 0px;
         }
+        #invisi-button-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+        .button {
+          display: inline-block;
+          text-align: center;
+          color: white;
+          background-color: var(--invisi-button-background-color);
+          padding: 0.5rem 2rem;
+          border: 2px solid var(--invisi-button-background-color);
+          border-radius: 5px;
+          font-family: var(--invisi-button-font);
+          text-decoration: none;
+          transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
         /* summary:hover {
           background-color: var(--simple-colors-default-theme-orange-6);
         } */
@@ -165,14 +243,13 @@ export class SciCard extends SimpleColors {
   render() {
     return html`
       <div id="cardFrame">
-        <details>
+        <details .open=${this.openState}>
           <summary part="banner">
             <div
               class="slot-wrapper"
               data-label="Header"
               data-layout-slotname="header"
             >
-              <!-- <slot name="header"></slot> -->
               <sci-card-banner my-icon="${this.myIcon}" type="${this.type}">
                 <div slot="main-header">
                   <slot name="mainheader">${this.mainheader}</slot>
@@ -183,11 +260,11 @@ export class SciCard extends SimpleColors {
               </sci-card-banner>
             </div>
           </summary>
-          <div id="drawerContents">
-            <ul>
-              <li>Test</li>
-              <li>Test2</li>
-            </ul>
+          <div id="drawerContents">${this.myBody}</div>
+          <div id="invisi-button-container" slot="invisi-button">
+            <invisi-button
+              style="--invisi-button-background-color: ${this.accentColor}"
+            ></invisi-button>
           </div>
         </details>
       </div>
@@ -209,7 +286,7 @@ export class SciCard extends SimpleColors {
       canEditSource: true,
       contentEditable: true,
       gizmo: {
-        title: 'Learning Card',
+        title: 'Sci Card',
         description: 'An element that you have to replace / fix / improve',
         icon: 'credit-card',
         color: 'blue',
@@ -223,8 +300,9 @@ export class SciCard extends SimpleColors {
             description: 'Identifies the card',
             inputMethod: 'select',
             options: {
-              science: 'Science',
-              math: 'Math',
+              science: 'science',
+              objectives: 'objective',
+              fact: 'fact',
             },
           },
         ],

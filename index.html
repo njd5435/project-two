@@ -27,30 +27,18 @@
       font-weight: bold;
       padding: 40px;
     }
-    sci-card[type="objective"]::part(banner) {
-      background-color: darkorange;
-    }
-    sci-card[type="science"]::part(banner) {
-      background-color: seagreen;
-    }
-    sci-card[type="fact"]::part(banner) {
-      background-color: slateblue;
-    }
-    learning-card.two::part(icon) {
-      --learning-card-height: 150px;
-      --learning-card-width: 150px;
-      background-color: blue;
-    }
-    learning-card[type="science"]::part(icon) {
-      width: 200px;
-      height: 200px;
-    }
     @media only screen and (max-width: 480px) {
           sci-card {
             display: flex;
             flex-direction: row;
           }
         }
+
+    @media only screen and (max-width: 420px) {
+      body {
+        padding: 10px;
+      }
+    }
   </style>
   <title>Project two: learning card</title>
 </head>
@@ -60,11 +48,22 @@
     <li><a href="#">Card demo</a></li>
     <li><a href="/hax.html">HAX, card demo</a></li>
   </ul>
-  <div class="wrapper">
+  <!-- slot the button in here  -->
+  <div class="">
     <card-frame type="objective"></card-frame>
     <card-frame type="science"></card-frame>
     <card-frame type="fact"></card-frame>
+    <sci-card-banner></sci-card-banner>
+    <div style="background-color: red; margin-top: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <p>Icon</p>
+      <sci-card-icon
+          icon="test"
+          my-icon="beaker"
+          type="beaker"
+        ></sci-card-icon>
+    </div>
   </div>
+  <sci-card type="objective"></sci-card>
   <script type="module">
     import "./src/app.js";
   </script>
