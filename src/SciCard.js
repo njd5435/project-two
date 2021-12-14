@@ -28,6 +28,7 @@ export class SciCard extends SimpleColors {
     this.mainheader = 'Unit 1';
     this.subheader = 'Learning Objectives';
     this.openState = true;
+    this.accentColor = '#835FFF';
 
     if (this.getAttribute('icon') != null) {
       const sketchTag = document.createElement('sci-card-icon');
@@ -37,17 +38,6 @@ export class SciCard extends SimpleColors {
         import('./SciCardIcon.js');
       }, 0);
     }
-
-    // if (document.querySelector("#cardFrame").clientWidth < "320px")
-
-    // document.querySelector('#cardFrame').addEventListener('toggle', event => {
-    //   if (document.querySelector('#cardFrame').open) {
-    //     document.querySelector('summary').style.transform = 'rotate(-90deg)';
-    //   } else {
-    //     document.querySelector('summary').style.transform = 'rotate(90deg)';
-    //   }
-    // })
-    // this.addEventListener('toggle', document.querySelector('summary')._rotateIcon);
   }
 
   // properties that you wish to use as data in HTML, CSS, and the updated life-cycle
@@ -55,8 +45,8 @@ export class SciCard extends SimpleColors {
     return {
       type: { type: String, reflect: true },
       myIcon: { type: String, attribute: 'my-icon' },
-      mainheader: { type: String },
-      subheader: { type: String },
+      mainheader: { type: String, reflect: true },
+      subheader: { type: String, reflect: true },
       openState: { type: Boolean },
     };
   }
@@ -69,42 +59,19 @@ export class SciCard extends SimpleColors {
         this.myIcon = 'beaker';
         this.mainheader = 'Unit 1';
         this.subheader = 'Chem Connection';
-        this.accentColor = 'seagreen';
-        this.myBody = html`
-          <ul>
-            <li>Describe the subatomic particles that make up an atom.</li>
-            <li>
-              Use the periodic table to determine the numbers of protons and
-              electrons in a neutral (uncharged) atom.
-            </li>
-          </ul>
-        `;
+        this.accentColor = '#008C37';
       }
       if (propName === 'type' && this[propName] === 'objective') {
         this.myIcon = 'lightbulb';
-        this.mainheader = 'Unit 1';
-        this.subheader = 'Learning Objectives';
-        this.accentColor = 'darkorange';
-        this.myBody = html`
-          <ul>
-            <li>Learning Objective 1</li>
-            <li>Learning Objective 2</li>
-          </ul>
-        `;
+        // this.mainheader = 'Unit 1';
+        // this.subheader = 'Learning Objectives';
+        this.accentColor = '#FF9625';
       }
       if (propName === 'type' && this[propName] === 'fact') {
         this.myIcon = 'question';
         this.mainheader = 'Unit 1';
         this.subheader = 'Did you know?';
-        this.accentColor = 'slateblue';
-        this.myBody = html`
-          <ul>
-            <li>
-              There is about 0.4 pounds or 200g of NaCl in the average adult
-              human body.
-            </li>
-          </ul>
-        `;
+        this.accentColor = '#0066CA';
       }
     });
   }
@@ -129,24 +96,6 @@ export class SciCard extends SimpleColors {
   disconnectedCallback() {
     super.disconnectedCallback();
   }
-
-  // _rotateIcon() {
-  //   // console.log(this);
-  //   if (!this.shadowRoot.querySelector('details').open) {
-  //     this.shadowRoot.querySelector('summary').style.listStyleImage =
-  //       "url('../assets/arrow-down.svg')";
-  //   } else {
-  //     this.shadowRoot.querySelector('summary').style.listStyleImage =
-  //       "url('../assets/arrow-right.svg')";
-  //   }
-
-  //   // if (this.open) {
-  //   //   document.querySelector('summary::marker').style.transform = 'rotate(-90deg)';
-  //   // } else {
-  //   //   console.log("hi");
-  //   //   // document.querySelector('summary::marker').style.transform = 'rotate(90deg)';
-  //   // }
-  // }
 
   /* eslint-disable no-param-reassign */
   stateToggle() {
@@ -197,13 +146,11 @@ export class SciCard extends SimpleColors {
         }
         summary {
           list-style-position: inside;
-          list-style-image: url('../assets/arrow-right.svg');
           display: block;
         }
-        li {
-          font-size: x-large;
-        }
+       
         #drawerContents {
+          font-size: 150%;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -231,10 +178,19 @@ export class SciCard extends SimpleColors {
           text-decoration: none;
           transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
         }
+        @media screen and (max-width: 560px) {
+          #drawerContents {
+            font-size: .75em;
+          }
 
-        /* summary:hover {
-          background-color: var(--simple-colors-default-theme-orange-6);
-        } */
+        @media screen and (min-width: 560px) {
+        #drawerContents {
+          font-size: 1em;
+        }
+        @media screen and (min-width: 920px) {
+          #drawerContents {
+            font-size: 2em;
+          }
       `,
     ];
   }
@@ -252,18 +208,23 @@ export class SciCard extends SimpleColors {
             >
               <sci-card-banner my-icon="${this.myIcon}" type="${this.type}">
                 <div slot="main-header">
-                  <slot name="mainheader">${this.mainheader}</slot>
+                  <slot name="header-container"></slot>
                 </div>
                 <div slot="sub-header">
-                  <slot name="subheader">${this.subheader}</slot>
+                  <slot name="sub-header-container"></slot>
                 </div>
               </sci-card-banner>
             </div>
           </summary>
-          <div id="drawerContents">${this.myBody}</div>
+          <div id="drawerContents">
+            <slot name="card-body"></slot>
+            <slot name="body-container"></slot>
+          </div>
           <div id="invisi-button-container" slot="invisi-button">
             <invisi-button
               style="--invisi-button-background-color: ${this.accentColor}"
+              title="Details"
+              link="https://science.psu.edu/"
             ></invisi-button>
           </div>
         </details>
